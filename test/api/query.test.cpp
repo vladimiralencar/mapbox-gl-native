@@ -11,6 +11,7 @@
 #include <mbgl/style/style.hpp>
 #include <mbgl/style/image.hpp>
 #include <mbgl/style/source.hpp>
+#include <mbgl/test/stub_renderer_frontend.hpp>
 
 using namespace mbgl;
 using namespace mbgl::style;
@@ -33,7 +34,12 @@ public:
     OffscreenView view { backend.getContext() };
     StubFileSource fileSource;
     ThreadPool threadPool { 4 };
-    Map map { backend, MapObserver::nullObserver(), view.getSize(), 1, fileSource, threadPool, MapMode::Still };
+    float pixelRatio { 1 };
+    MapMode mode { MapMode::Still };
+    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio,
+                                            mode };
+    Map map { rendererFrontend, MapObserver::nullObserver(), view.getSize(), pixelRatio, fileSource,
+              threadPool, mode };
 };
 
 } // end namespace

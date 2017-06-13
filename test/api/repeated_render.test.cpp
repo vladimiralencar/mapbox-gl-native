@@ -11,6 +11,7 @@
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
 #include <mbgl/style/style.hpp>
+#include <mbgl/test/stub_renderer_frontend.hpp>
 
 #include <future>
 
@@ -26,17 +27,22 @@ TEST(API, RepeatedRender) {
     HeadlessBackend backend { test::sharedDisplay() };
     BackendScope scope { backend };
     OffscreenView view { backend.getContext(), { 256, 512 } };
+    float pixelRatio { 1 };
+    MapMode mode { MapMode::Still };
     DefaultFileSource fileSource(":memory:", "test/fixtures/api/assets");
     ThreadPool threadPool(4);
+    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio,
+                                            mode };
 
     Log::setObserver(std::make_unique<FixtureLogObserver>());
 
-    Map map(backend, MapObserver::nullObserver(), view.getSize(), 1, fileSource, threadPool, MapMode::Still);
+    Map map(rendererFrontend, MapObserver::nullObserver(), view.getSize(), pixelRatio, fileSource,
+            threadPool, mode);
 
     {
         map.getStyle().loadJSON(style);
         PremultipliedImage result;
-        map.renderStill(view, [&](std::exception_ptr) {
+        map.renderStill([&](std::exception_ptr) {
             result = view.readStillImage();
         });
 
@@ -54,7 +60,7 @@ TEST(API, RepeatedRender) {
     {
         map.getStyle().loadJSON(style);
         PremultipliedImage result;
-        map.renderStill(view, [&](std::exception_ptr) {
+        map.renderStill([&](std::exception_ptr) {
             result = view.readStillImage();
         });
 

@@ -28,10 +28,6 @@ public:
     // Called prior to rendering to update the internally assumed OpenGL state.
     virtual void updateAssumedState() = 0;
 
-    // Called when the map needs to be rendered; the backend should call Map::render() at some point
-    // in the near future. (Not called for Map::renderStill() mode.)
-    virtual void invalidate() = 0;
-
 protected:
     // Called with the name of an OpenGL extension that should be loaded. Backend implementations
     // must call the API-specific version that obtains the function pointer for this function,

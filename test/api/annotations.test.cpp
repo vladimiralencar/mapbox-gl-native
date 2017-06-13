@@ -12,6 +12,7 @@
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
 #include <mbgl/util/color.hpp>
+#include <mbgl/test/stub_renderer_frontend.hpp>
 
 using namespace mbgl;
 
@@ -33,7 +34,12 @@ public:
     OffscreenView view { backend.getContext() };
     StubFileSource fileSource;
     ThreadPool threadPool { 4 };
-    Map map { backend, MapObserver::nullObserver(), view.getSize(), 1, fileSource, threadPool, MapMode::Still };
+    float pixelRatio { 1 };
+    MapMode mode { MapMode::Still };
+    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio,
+                                            mode };
+    Map map { rendererFrontend, MapObserver::nullObserver(), view.getSize(), pixelRatio, fileSource,
+              threadPool, mode };
 
     void checkRendering(const char * name) {
         test::checkImage(std::string("test/fixtures/annotations/") + name,
