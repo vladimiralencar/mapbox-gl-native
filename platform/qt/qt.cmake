@@ -64,6 +64,8 @@ add_library(qmapboxgl SHARED
     platform/qt/src/qmapbox.cpp
     platform/qt/src/qmapboxgl.cpp
     platform/qt/src/qmapboxgl_p.hpp
+    platform/qt/src/qrenderer_frontend.hpp
+    platform/qt/src/qrenderer_frontend.cpp
     platform/default/mbgl/util/default_styles.hpp
     platform/default/mbgl/util/default_styles.cpp
 )
