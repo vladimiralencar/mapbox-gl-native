@@ -9,26 +9,26 @@
 
 namespace mbgl {
 
-//
+// Default implementation for RendererFrontend
 class AsyncRendererFrontend : public mbgl::RendererFrontend {
 public:
-    AsyncRendererFrontend(std::unique_ptr<Renderer>, mbgl::View&);
+    AsyncRendererFrontend(std::unique_ptr<Renderer>, View&);
     ~AsyncRendererFrontend() override;
 
-    void reset();
+    void reset() override;
 
-    void update(std::shared_ptr<mbgl::UpdateParameters> updateParameters_) override;
+    void update(std::shared_ptr<UpdateParameters> updateParameters_) override;
 
-    std::vector<mbgl::Feature> queryRenderedFeatures(std::shared_ptr<mbgl::RenderedQueryParameters> params) const override;
-    std::vector<mbgl::Feature> querySourceFeatures(std::shared_ptr<mbgl::SourceQueryParameters> params) const override;
+    std::vector<Feature> queryRenderedFeatures(ScreenLineString, RenderedQueryOptions) const override;
+    std::vector<Feature> querySourceFeatures(std::string sourceID, SourceQueryOptions) const override;
     
-    void setObserver(mbgl::RendererObserver& observer_) override;
+    void setObserver(RendererObserver& observer_) override;
     
 private:
-    std::unique_ptr<mbgl::Renderer> renderer;
-    mbgl::View& view;
-    std::shared_ptr<mbgl::UpdateParameters> updateParameters;
-    mbgl::util::AsyncTask asyncInvalidate;
+    std::unique_ptr<Renderer> renderer;
+    View& view;
+    std::shared_ptr<UpdateParameters> updateParameters;
+    util::AsyncTask asyncInvalidate;
 };
     
 } // namespace mbgl

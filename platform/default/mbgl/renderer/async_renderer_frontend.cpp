@@ -27,29 +27,19 @@ void AsyncRendererFrontend::update(std::shared_ptr<UpdateParameters> updateParam
     asyncInvalidate.send();
 }
 
-std::vector<Feature> AsyncRendererFrontend::queryRenderedFeatures(std::shared_ptr<RenderedQueryParameters> params) const {
+std::vector<Feature> AsyncRendererFrontend::queryRenderedFeatures(ScreenLineString geometry, RenderedQueryOptions options) const {
     if (!renderer) return {};
-    return renderer->queryRenderedFeatures(*params);
+    return renderer->queryRenderedFeatures(geometry, options);
 }
 
-std::vector<Feature> AsyncRendererFrontend::querySourceFeatures(std::shared_ptr<SourceQueryParameters> params) const {
+std::vector<Feature> AsyncRendererFrontend::querySourceFeatures(std::string sourceID, SourceQueryOptions options) const {
     if (!renderer) return {};
-    return renderer->querySourceFeatures(*params);
+    return renderer->querySourceFeatures(sourceID, options);
 }
 
-void AsyncRendererFrontend::setRenderer(std::unique_ptr<Renderer> renderer_, RendererObserver& observer_) {
-    renderer = std::move(renderer_);
+void AsyncRendererFrontend::setObserver(RendererObserver& observer_) {
+    if (!renderer) return;
     renderer->setObserver(&observer_);
-}
-
-void AsyncRendererFrontend::onLowMemory() {
-    if (!renderer) return;
-    renderer->onLowMemory();
-}
-
-void AsyncRendererFrontend::dumpDebugLogs() {
-    if (!renderer) return;
-    renderer->dumpDebugLogs();
 }
 
 } // namespace mbgl
