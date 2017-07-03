@@ -25,12 +25,12 @@ void Renderer::render(View& view, const UpdateParameters& updateParameters) {
     impl->render(view, updateParameters);
 }
 
-std::vector<Feature> Renderer::queryRenderedFeatures(const RenderedQueryParameters& params) const {
-    return impl->queryRenderedFeatures(params);
+std::vector<Feature> Renderer::queryRenderedFeatures(const ScreenLineString& geometry, const RenderedQueryOptions& options) const {
+    return impl->queryRenderedFeatures(geometry, options);
 }
 
-std::vector<Feature> Renderer::querySourceFeatures(const SourceQueryParameters& params) const {
-    return impl->querySourceFeatures(params);
+std::vector<Feature> Renderer::querySourceFeatures(const std::string& sourceID, const SourceQueryOptions& options) const {
+    return impl->querySourceFeatures(sourceID, options);
 }
 
 void Renderer::dumpDebugLogs() {

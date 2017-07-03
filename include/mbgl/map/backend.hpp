@@ -27,7 +27,7 @@ public:
     // Called prior to rendering to update the internally assumed OpenGL state.
     virtual void updateAssumedState() = 0;
 
-    inline virtual BackendScope::ScopeType getScopeType() {
+    inline virtual BackendScope::ScopeType getScopeType() const {
         return BackendScope::ScopeType::Explicit;
     };
 

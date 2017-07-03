@@ -4,10 +4,8 @@
 #include <mbgl/renderer/render_style_observer.hpp>
 #include <mbgl/style/style.hpp>
 
-#include <mbgl/map/map.hpp>
+#include <mbgl/map/mode.hpp>
 #include <mbgl/map/backend.hpp>
-#include <mbgl/map/transform_state.hpp>
-#include <mbgl/map/view.hpp>
 
 #include <memory>
 #include <string>
@@ -22,26 +20,9 @@ enum class RenderState : uint8_t {
 
 class Painter;
 class RenderStyle;
+class TransformState;
 class View;
 
-
-class RenderResult {
-public:
-    bool needsRepaint;
-};
-
-class RenderedQueryParameters {
-public:
-    const ScreenLineString geometry;
-    const TransformState transformState;
-    const RenderedQueryOptions options;
-};
-
-class SourceQueryParameters {
-public:
-    const std::string sourceID;
-    const SourceQueryOptions options;
-};
 
 class Renderer::Impl : public RenderStyleObserver {
 public:
@@ -53,10 +34,8 @@ public:
 
     void render(View&, const UpdateParameters&);
 
-    std::vector<Feature> queryRenderedFeatures(const RenderedQueryParameters&) const;
-
-    std::vector<Feature> querySourceFeatures(const SourceQueryParameters&) const;
-
+    std::vector<Feature> queryRenderedFeatures(const ScreenLineString&, const RenderedQueryOptions&) const;
+    std::vector<Feature> querySourceFeatures(const std::string& sourceID, const SourceQueryOptions&) const;
 
     void onLowMemory();
 
@@ -82,8 +61,6 @@ private:
 
     std::unique_ptr<RenderStyle> renderStyle;
     std::unique_ptr<Painter> painter;
-
-    size_t sourceCacheSize;
 
 };
 

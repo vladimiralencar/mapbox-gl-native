@@ -1,7 +1,8 @@
 #pragma once
 
-#include <mbgl/util/feature.hpp>
 #include <mbgl/map/map_observer.hpp>
+#include <mbgl/util/feature.hpp>
+#include <mbgl/util/geo.hpp>
 
 #include <functional>
 #include <memory>
@@ -10,12 +11,11 @@
 
 namespace mbgl {
 
-class UpdateParameters;
 class Renderer;
 class RendererObserver;
-class RenderedQueryParameters;
-class Scheduler;
-class SourceQueryParameters;
+class RenderedQueryOptions;
+class SourceQueryOptions;
+class UpdateParameters;
 
 class RendererFrontend {
 public:
@@ -32,10 +32,9 @@ public:
     // Coalescing updates is up to the implementer
     virtual void update(std::shared_ptr<UpdateParameters>) = 0;
 
-    virtual std::vector<Feature> queryRenderedFeatures(std::shared_ptr<RenderedQueryParameters>) const = 0;
+    virtual std::vector<Feature> queryRenderedFeatures(ScreenLineString, RenderedQueryOptions) const = 0;
 
-    virtual std::vector<Feature> querySourceFeatures(std::shared_ptr<SourceQueryParameters>) const = 0;
-
+    virtual std::vector<Feature> querySourceFeatures(std::string, SourceQueryOptions) const = 0;
 };
 
 } // namespace mbgl

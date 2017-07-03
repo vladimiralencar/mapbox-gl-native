@@ -4,6 +4,7 @@
 #include <mbgl/renderer/render_style.hpp>
 #include <mbgl/renderer/painter.hpp>
 #include <mbgl/renderer/update_parameters.hpp>
+#include <mbgl/map/transform_state.hpp>
 // TODO move to renderer?
 #include <mbgl/map/backend_scope.hpp>
 
@@ -114,19 +115,19 @@ void Renderer::Impl::render(View& view, const UpdateParameters& updateParameters
     }
 }
 
-std::vector<Feature> Renderer::Impl::queryRenderedFeatures(const RenderedQueryParameters& params) const {
-    if (!renderStyle) return {};
+std::vector<Feature> Renderer::Impl::queryRenderedFeatures(const ScreenLineString& geometry, const RenderedQueryOptions& options) const {
+    if (!renderStyle || !painter) return {};
 
-    return renderStyle->queryRenderedFeatures(params.geometry, params.transformState, params.options);
+    return renderStyle->queryRenderedFeatures(geometry, painter->state, options);
 }
 
-std::vector<Feature> Renderer::Impl::querySourceFeatures(const SourceQueryParameters& params) const {
+std::vector<Feature> Renderer::Impl::querySourceFeatures(const std::string& sourceID, const SourceQueryOptions& options) const {
     if (!renderStyle) return {};
 
-    const RenderSource* source = renderStyle->getRenderSource(params.sourceID);
+    const RenderSource* source = renderStyle->getRenderSource(sourceID);
     if (!source) return {};
 
-    return source->querySourceFeatures(params.options);
+    return source->querySourceFeatures(options);
 }
 
 void Renderer::Impl::onInvalidate() {

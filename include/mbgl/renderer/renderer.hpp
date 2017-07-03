@@ -3,6 +3,7 @@
 #include <mbgl/map/mode.hpp>
 #include <mbgl/map/query.hpp>
 #include <mbgl/util/feature.hpp>
+#include <mbgl/util/geo.hpp>
 
 #include <functional>
 #include <memory>
@@ -13,12 +14,11 @@ namespace mbgl {
 
 class Backend;
 class FileSource;
-class UpdateParameters;
-class RenderedQueryParameters;
-class SourceQueryParameters;
-class UpdateParameters;
 class RendererObserver;
+class RenderedQueryOptions;
 class Scheduler;
+class SourceQueryOptions;
+class UpdateParameters;
 class View;
 
 class Renderer {
@@ -31,9 +31,8 @@ public:
 
     void setObserver(RendererObserver*);
 
-    std::vector<Feature> queryRenderedFeatures(const RenderedQueryParameters&) const;
-
-    std::vector<Feature> querySourceFeatures(const SourceQueryParameters&) const;
+    std::vector<Feature> queryRenderedFeatures(const ScreenLineString&, const RenderedQueryOptions&) const;
+    std::vector<Feature> querySourceFeatures(const std::string& sourceID, const SourceQueryOptions&) const;
 
     void dumpDebugLogs();
 

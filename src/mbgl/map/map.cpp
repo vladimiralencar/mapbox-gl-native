@@ -633,16 +633,11 @@ void Map::removeAnnotation(AnnotationID annotation) {
 #pragma mark - Feature query api
 
 std::vector<Feature> Map::queryRenderedFeatures(const ScreenCoordinate& point, const RenderedQueryOptions& options) {
-    RenderedQueryParameters params {
-            { point },
-            impl->transform.getState(),
-            options
-    };
-    return impl->rendererFrontend.queryRenderedFeatures(std::make_unique<RenderedQueryParameters>(std::move(params)));
+    return impl->rendererFrontend.queryRenderedFeatures({ point }, options);
 }
 
 std::vector<Feature> Map::queryRenderedFeatures(const ScreenBox& box, const RenderedQueryOptions& options) {
-    RenderedQueryParameters params {
+    return impl->rendererFrontend.queryRenderedFeatures(
             {
                 box.min,
                 {box.max.x, box.min.y},
@@ -650,16 +645,12 @@ std::vector<Feature> Map::queryRenderedFeatures(const ScreenBox& box, const Rend
                 {box.min.x, box.max.y},
                 box.min
             },
-            impl->transform.getState(),
             options
-    };
-    return impl->rendererFrontend.queryRenderedFeatures(
-            std::make_unique<RenderedQueryParameters>(std::move(params)));
+    );
 }
 
 std::vector<Feature> Map::querySourceFeatures(const std::string& sourceID, const SourceQueryOptions& options) {
-    SourceQueryParameters params {sourceID, options};
-    return impl->rendererFrontend.querySourceFeatures(std::make_unique<SourceQueryParameters>(std::move(params)));
+    return impl->rendererFrontend.querySourceFeatures(sourceID, options);
 }
 
 AnnotationIDs Map::queryPointAnnotations(const ScreenBox& box) {

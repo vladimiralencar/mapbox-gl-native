@@ -29,8 +29,8 @@ public:
     void update(std::shared_ptr<UpdateParameters>) override;
     void render(View& view);
 
-    std::vector<Feature> queryRenderedFeatures(std::shared_ptr<RenderedQueryParameters>) const override;
-    std::vector<Feature> querySourceFeatures(std::shared_ptr<SourceQueryParameters>) const override;
+    std::vector<Feature> queryRenderedFeatures(ScreenLineString, RenderedQueryOptions) const override;
+    std::vector<Feature> querySourceFeatures(std::string sourceID, SourceQueryOptions) const override;
 
 private:
     std::unique_ptr<Renderer> renderer;

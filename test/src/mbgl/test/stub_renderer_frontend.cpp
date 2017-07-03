@@ -44,14 +44,14 @@ void StubRendererFrontend::render(View& view) {
     renderer->render(view, *updateParameters);
 }
 
-std::vector<Feature> StubRendererFrontend::queryRenderedFeatures(std::shared_ptr<RenderedQueryParameters> params) const {
+std::vector<Feature> StubRendererFrontend::queryRenderedFeatures(ScreenLineString geometry, RenderedQueryOptions options) const {
     if (!renderer) return {};
-    return renderer->queryRenderedFeatures(*params);
+    return renderer->queryRenderedFeatures(geometry, options);
 }
 
-std::vector<Feature> StubRendererFrontend::querySourceFeatures(std::shared_ptr<SourceQueryParameters> params) const {
+std::vector<Feature> StubRendererFrontend::querySourceFeatures(std::string sourceID, SourceQueryOptions options) const {
     if (!renderer) return {};
-    return renderer->querySourceFeatures(*params);
+    return renderer->querySourceFeatures(sourceID, options);
 }
 
 } // namespace mbgl
