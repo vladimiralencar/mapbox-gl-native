@@ -8,6 +8,7 @@
 #include <mbgl/gl/offscreen_view.hpp>
 #include <mbgl/test/stub_renderer_frontend.hpp>
 #include <mbgl/storage/online_file_source.hpp>
+#include <mbgl/renderer/renderer.hpp>
 #include <mbgl/util/default_thread_pool.hpp>
 #include <mbgl/util/exception.hpp>
 #include <mbgl/util/run_loop.hpp>
@@ -30,7 +31,8 @@ TEST(API, RenderWithoutCallback) {
     ThreadPool threadPool(4);
     float pixelRatio { 1 };
     MapMode mode { MapMode::Still };
-    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio, mode };
+    StubRendererFrontend rendererFrontend {
+            std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode), view };
 
     auto map = std::make_unique<Map>(rendererFrontend, MapObserver::nullObserver(), view.getSize(),
                                      pixelRatio, fileSource, threadPool, mode);

@@ -14,13 +14,15 @@ static RendererObserver& nullObserver() {
     return observer;
 }
 
-Renderer::Impl::Impl(float pixelRatio_,
-                     Scheduler& scheduler_,
+Renderer::Impl::Impl(Backend& backend_,
+                     float pixelRatio_,
                      FileSource& fileSource_,
+                     Scheduler& scheduler_,
                      MapMode mode_,
                      GLContextMode contextMode_,
                      const optional<std::string> programCacheDir_)
-        : observer(&nullObserver())
+        : backend(backend_)
+        , observer(&nullObserver())
         , mode(mode_)
         , contextMode(contextMode_)
         , pixelRatio(pixelRatio_),
@@ -31,6 +33,7 @@ Renderer::Impl::Impl(float pixelRatio_,
 }
 
 Renderer::Impl::~Impl() {
+    BackendScope guard { backend, backend.getScopeType()};
     renderStyle.reset();
 };
 
@@ -38,9 +41,11 @@ void Renderer::Impl::setObserver(RendererObserver* observer_) {
     observer = observer_ ? observer_ : &nullObserver();
 }
 
-void Renderer::Impl::render(Backend& backend, View& view, const UpdateParameters& updateParameters) {
+void Renderer::Impl::render(View& view, const UpdateParameters& updateParameters) {
     // Don't load/render anyting in still mode until explicitly requested.
     if (updateParameters.mode == MapMode::Still && !updateParameters.stillImageRequest) return;
+
+    BackendScope guard { backend, backend.getScopeType() };
 
     // Update render style
     renderStyle->update(updateParameters);
@@ -134,7 +139,7 @@ void Renderer::Impl::onResourceError(std::exception_ptr ptr) {
 
 void Renderer::Impl::onLowMemory() {
     if (painter) {
-        assert(BackendScope::exists());
+        BackendScope { backend, backend.getScopeType() };
         painter->cleanup();
     }
     if (renderStyle) {

@@ -1,8 +1,5 @@
 #include <mbgl/map/map.hpp>
 #include <mbgl/map/camera.hpp>
-#include <mbgl/map/view.hpp>
-#include <mbgl/map/backend.hpp>
-#include <mbgl/map/backend_scope.hpp>
 #include <mbgl/map/transform.hpp>
 #include <mbgl/map/transform_state.hpp>
 #include <mbgl/annotation/annotation_manager.hpp>

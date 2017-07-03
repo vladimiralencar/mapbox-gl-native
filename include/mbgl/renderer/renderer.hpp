@@ -23,11 +23,11 @@ class View;
 
 class Renderer {
 public:
-    Renderer(float pixelRatio_, Scheduler&, FileSource&,
-             MapMode, GLContextMode, const optional<std::string> = {});
+    Renderer(Backend&, float pixelRatio_, FileSource&, Scheduler&, MapMode = MapMode::Continuous,
+             GLContextMode = GLContextMode::Unique, const optional<std::string> = {});
     ~Renderer();
 
-    void render(Backend&, View& view, const UpdateParameters&);
+    void render(View& view, const UpdateParameters&);
 
     void setObserver(RendererObserver*);
 

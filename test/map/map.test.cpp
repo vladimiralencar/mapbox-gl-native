@@ -12,6 +12,7 @@
 #include <mbgl/storage/network_status.hpp>
 #include <mbgl/storage/default_file_source.hpp>
 #include <mbgl/storage/online_file_source.hpp>
+#include <mbgl/renderer/renderer.hpp>
 #include <mbgl/util/image.hpp>
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
@@ -72,7 +73,8 @@ public:
     Map map;
 
     MapTest(float pixelRatio = 1, MapMode mode = MapMode::Still)
-        : rendererFrontend { backend, view , fileSource, threadPool, pixelRatio, mode}
+        : rendererFrontend(
+            std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode), view)
         , map(rendererFrontend, observer, view.getSize(), pixelRatio, fileSource, threadPool, mode) {
     }
 
@@ -81,7 +83,9 @@ public:
             float pixelRatio = 1, MapMode mode = MapMode::Still,
             typename std::enable_if<std::is_same<T, DefaultFileSource>::value>::type* = 0)
             : fileSource { cachePath, assetRoot }
-            , rendererFrontend { backend, view , fileSource, threadPool, pixelRatio, mode}
+            , rendererFrontend(
+                    std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode),
+                    view)
             , map(rendererFrontend, observer, view.getSize(), pixelRatio, fileSource, threadPool, mode) {
     }
 };
@@ -556,9 +560,7 @@ TEST(Map, TEST_DISABLED_ON_CI(ContinuousRendering)) {
     std::function<bool()> isLoaded;
 
     StubRendererFrontend rendererFrontend {
-            backend,
-            fileSource,
-            threadPool,
+            std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode),
             [&](StubRendererFrontend& bridge) {
                 if (isLoaded()) {
                     // Abort the test after 1 second after the map loading fully. Note that a "fully loaded
@@ -572,9 +574,7 @@ TEST(Map, TEST_DISABLED_ON_CI(ContinuousRendering)) {
                 }
 
                 bridge.render(view);
-            },
-            pixelRatio,
-            mode
+            }
     };
 
     Map map(rendererFrontend, MapObserver::nullObserver(), view.getSize(), pixelRatio, fileSource,

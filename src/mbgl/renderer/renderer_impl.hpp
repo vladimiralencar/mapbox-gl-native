@@ -45,20 +45,19 @@ public:
 
 class Renderer::Impl : public RenderStyleObserver {
 public:
-    Impl(float pixelRatio_, Scheduler&, FileSource&,
-         MapMode, GLContextMode, const optional<std::string>);
+    Impl(Backend&, float pixelRatio_, FileSource&, Scheduler&, MapMode, GLContextMode,
+         const optional<std::string>);
     ~Impl() final;
 
     void setObserver(RendererObserver*);
 
-    void render(Backend&, View&, const UpdateParameters&);
+    void render(View&, const UpdateParameters&);
 
     std::vector<Feature> queryRenderedFeatures(const RenderedQueryParameters&) const;
 
     std::vector<Feature> querySourceFeatures(const SourceQueryParameters&) const;
 
 
-    // TODO: needs backendScope
     void onLowMemory();
 
     void dumDebugLogs() ;
@@ -69,6 +68,8 @@ public:
 
 private:
     friend class Renderer;
+
+    Backend& backend;
 
     RendererObserver* observer;
 

@@ -11,6 +11,7 @@
 #include <mbgl/style/style.hpp>
 #include <mbgl/style/image.hpp>
 #include <mbgl/style/source.hpp>
+#include <mbgl/renderer/renderer.hpp>
 #include <mbgl/test/stub_renderer_frontend.hpp>
 
 using namespace mbgl;
@@ -36,8 +37,8 @@ public:
     ThreadPool threadPool { 4 };
     float pixelRatio { 1 };
     MapMode mode { MapMode::Still };
-    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio,
-                                            mode };
+    StubRendererFrontend rendererFrontend {
+            std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode), view };
     Map map { rendererFrontend, MapObserver::nullObserver(), view.getSize(), pixelRatio, fileSource,
               threadPool, mode };
 };

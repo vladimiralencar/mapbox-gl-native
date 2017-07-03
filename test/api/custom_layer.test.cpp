@@ -7,6 +7,7 @@
 #include <mbgl/gl/offscreen_view.hpp>
 #include <mbgl/util/default_thread_pool.hpp>
 #include <mbgl/storage/default_file_source.hpp>
+#include <mbgl/renderer/renderer.hpp>
 #include <mbgl/style/style.hpp>
 #include <mbgl/style/layers/custom_layer.hpp>
 #include <mbgl/style/layers/fill_layer.hpp>
@@ -95,7 +96,7 @@ TEST(CustomLayer, Basic) {
     ThreadPool threadPool(4);
     float pixelRatio { 1 };
     MapMode mode { MapMode::Still };
-    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio, mode };
+    StubRendererFrontend rendererFrontend { std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode), view };
     Map map(rendererFrontend, MapObserver::nullObserver(), view.getSize(), pixelRatio, fileSource,
             threadPool, mode);
     map.getStyle().loadJSON(util::read_file("test/fixtures/api/water.json"));

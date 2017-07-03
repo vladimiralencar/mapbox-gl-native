@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mbgl/map/view.hpp>
+#include <mbgl/map/backend_scope.hpp>
 #include <mbgl/util/image.hpp>
 #include <mbgl/util/size.hpp>
 
@@ -15,8 +16,6 @@ using ProcAddress = void (*)();
 using FramebufferID = uint32_t;
 } // namespace gl
 
-class BackendScope;
-
 class Backend {
 public:
     Backend();
@@ -27,6 +26,10 @@ public:
 
     // Called prior to rendering to update the internally assumed OpenGL state.
     virtual void updateAssumedState() = 0;
+
+    inline virtual BackendScope::ScopeType getScopeType() {
+        return BackendScope::ScopeType::Explicit;
+    };
 
 protected:
     // Called with the name of an OpenGL extension that should be loaded. Backend implementations

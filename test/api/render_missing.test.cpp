@@ -7,6 +7,7 @@
 #include <mbgl/gl/offscreen_view.hpp>
 #include <mbgl/util/default_thread_pool.hpp>
 #include <mbgl/storage/default_file_source.hpp>
+#include <mbgl/renderer/renderer.hpp>
 #include <mbgl/util/image.hpp>
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
@@ -36,8 +37,7 @@ TEST(API, TEST_REQUIRES_SERVER(RenderMissingTile)) {
     MapMode mode { MapMode::Still };
     DefaultFileSource fileSource(":memory:", "test/fixtures/api/assets");
     ThreadPool threadPool(4);
-    StubRendererFrontend rendererFrontend { backend, view, fileSource, threadPool, pixelRatio,
-                                            mode };
+    StubRendererFrontend rendererFrontend { std::make_unique<Renderer>(backend, pixelRatio, fileSource, threadPool, mode), view };
 
     Log::setObserver(std::make_unique<FixtureLogObserver>());
 

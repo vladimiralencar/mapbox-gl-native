@@ -1,17 +1,17 @@
 #include <mbgl/renderer/renderer.hpp>
 #include <mbgl/renderer/renderer_impl.hpp>
 #include <mbgl/renderer/update_parameters.hpp>
-#include <mbgl/map/backend_scope.hpp>
 
 namespace mbgl {
 
-Renderer::Renderer(float pixelRatio_,
-                   Scheduler& scheduler_,
+Renderer::Renderer(Backend& backend,
+                   float pixelRatio_,
                    FileSource& fileSource_,
+                   Scheduler& scheduler_,
                    MapMode mode_,
                    GLContextMode contextMode_,
                    const optional<std::string> programCacheDir_)
-        : impl(std::make_unique<Impl>(pixelRatio_, scheduler_, fileSource_, mode_,
+        : impl(std::make_unique<Impl>(backend, pixelRatio_, fileSource_, scheduler_, mode_,
                                       contextMode_, std::move(programCacheDir_))) {
 }
 
@@ -21,9 +21,8 @@ void Renderer::setObserver(RendererObserver* observer) {
     impl->setObserver(observer);
 }
 
-void Renderer::render(Backend& backend, View& view, const UpdateParameters& updateParameters) {
-    assert(BackendScope::exists());
-    impl->render(backend, view, updateParameters);
+void Renderer::render(View& view, const UpdateParameters& updateParameters) {
+    impl->render(view, updateParameters);
 }
 
 std::vector<Feature> Renderer::queryRenderedFeatures(const RenderedQueryParameters& params) const {

@@ -3,20 +3,23 @@
 
 namespace mbgl {
 
-AsyncRendererFrontend::AsyncRendererFrontend(Backend& backend_, View& view_, BackendScope::ScopeType scopeType_)
-    : backend(backend_)
+AsyncRendererFrontend::AsyncRendererFrontend(std::unique_ptr<Renderer> renderer_, View& view_)
+    : renderer(std::move(renderer_))
     , view(view_)
-    , scopeType(scopeType_)
     , asyncInvalidate([this] {
         if (renderer && updateParameters) {
-            BackendScope guard { backend,  scopeType};
-            renderer->render(backend, view, *updateParameters);
+            renderer->render(view, *updateParameters);
         }
     }) {
 }
 
 AsyncRendererFrontend::~AsyncRendererFrontend() {
-    BackendScope guard { backend, scopeType };
+    reset();
+}
+
+void AsyncRendererFrontend::reset() {
+    if (!renderer) return;
+    renderer.reset();
 }
 
 void AsyncRendererFrontend::update(std::shared_ptr<UpdateParameters> updateParameters_) {

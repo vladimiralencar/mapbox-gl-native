@@ -10,6 +10,7 @@
 #include <mbgl/util/io.hpp>
 #include <mbgl/util/run_loop.hpp>
 #include <mbgl/style/style.hpp>
+#include <mbgl/renderer/renderer.hpp>
 #include <mbgl/test/stub_renderer_frontend.hpp>
 
 #include <algorithm>
@@ -77,8 +78,9 @@ TEST(Memory, Vector) {
     float ratio { 2 };
     MapMode mode { MapMode::Still };
 
-    StubRendererFrontend rendererFrontend { test.backend, test.view, test.fileSource,
-                                            test.threadPool, ratio, mode };
+    StubRendererFrontend rendererFrontend {
+            std::make_unique<Renderer>(test.backend, ratio, test.fileSource, test.threadPool, mode),
+            test.view };
     Map map(rendererFrontend, MapObserver::nullObserver(), { 256, 256 }, ratio, test.fileSource,
             test.threadPool, mode);
     map.setZoom(16); // more map features
@@ -92,8 +94,9 @@ TEST(Memory, Raster) {
     float ratio { 2 };
     MapMode mode { MapMode::Still };
 
-    StubRendererFrontend rendererFrontend { test.backend, test.view, test.fileSource,
-                                            test.threadPool, ratio, mode };
+    StubRendererFrontend rendererFrontend {
+            std::make_unique<Renderer>(test.backend, ratio, test.fileSource, test.threadPool, mode),
+            test.view };
 
     Map map(rendererFrontend, MapObserver::nullObserver(), { 256, 256 }, ratio, test.fileSource,
             test.threadPool, mode);
@@ -139,8 +142,9 @@ TEST(Memory, Footprint) {
 
     // Warm up buffers and cache.
     for (unsigned i = 0; i < 10; ++i) {
-        StubRendererFrontend rendererFrontend { test.backend, test.view, test.fileSource,
-                                                test.threadPool, ratio, mode };
+        StubRendererFrontend rendererFrontend {
+                std::make_unique<Renderer>(test.backend, ratio, test.fileSource, test.threadPool, mode),
+                test.view };
         Map map(rendererFrontend, MapObserver::nullObserver(), { 256, 256 }, ratio, test.fileSource,
                 test.threadPool, mode);
         renderMap(map, "mapbox://streets");
@@ -156,8 +160,9 @@ TEST(Memory, Footprint) {
 
     long vectorInitialRSS = mbgl::test::getCurrentRSS();
     for (unsigned i = 0; i < runs; ++i) {
-        auto frontend = std::make_unique<StubRendererFrontend> ( test.backend, test.view, test.fileSource,
-                                                test.threadPool, ratio, mode );
+        auto frontend = std::make_unique<StubRendererFrontend>(
+                std::make_unique<Renderer>(test.backend, ratio, test.fileSource, test.threadPool,
+                                           mode), test.view);
         auto vector = std::make_unique<Map>(*frontend, MapObserver::nullObserver(),
                                             Size{ 256, 256 }, ratio, test.fileSource,
                                             test.threadPool, mode);
@@ -169,8 +174,9 @@ TEST(Memory, Footprint) {
 
     long rasterInitialRSS = mbgl::test::getCurrentRSS();
     for (unsigned i = 0; i < runs; ++i) {
-        auto frontend = std::make_unique<StubRendererFrontend> ( test.backend, test.view, test.fileSource,
-                                                                 test.threadPool, ratio, mode );
+        auto frontend = std::make_unique<StubRendererFrontend>(
+                std::make_unique<Renderer>(test.backend, ratio, test.fileSource, test.threadPool,
+                                           mode), test.view);
         auto raster = std::make_unique<Map>(*frontend, MapObserver::nullObserver(),
                                             Size{ 256, 256 }, ratio, test.fileSource,
                                             test.threadPool, mode);
